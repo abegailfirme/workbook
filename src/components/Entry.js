@@ -1,13 +1,14 @@
 import React from 'react';
-
+import { ListGroup } from 'react-bootstrap';
 
 const Entry = (props) => {
   return (
-    <li>
-      <h2>{props.eid}</h2>
-      <h3>{props.firstname} {props.lastname}</h3>
-      <p>{props.email}</p>
-    </li>
+    <tr>
+      <td>{props.eid}</td>
+      <td>{props.firstname} {props.lastname}</td>
+      <td>{props.email}</td>
+      <td>{props.birthdate}</td>
+    </tr>
   );
 };
 

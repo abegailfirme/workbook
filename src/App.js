@@ -1,11 +1,13 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import EntryForm from './components/EntryForm';
 import WorkBook from './components/WorkBook';
 import { useState, useEffect, useCallback } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import Header from './components/Header/Header';
 
 function App() {
   const [entries, setData] = useState([]);
   const [error, setError] = useState(null);
-  // https://react-workbook-default-rtdb.firebaseio.com/entries.json
 
   const fetchEntryHandler = useCallback(async () => {
     setError(null);
@@ -30,7 +32,6 @@ function App() {
           birthdate: data[key].birthdate
         });
       }
-
       setData(fetchedEntries);
     } catch (error) {
       setError(error.message)
@@ -50,26 +51,22 @@ function App() {
       }
     });
     const data = await response.json();
-    console.log(data)
   }
 
   return (
-    <div className="app">
-      <div className="row">
-        <div className="col-xs-6">
+    <Container>
+      <Header/>
+      <Row>
+        <Col>
           <EntryForm onAddEntry={addEntryHandler} />
-        </div>
-
-        <div className={"col-xs-6"}>
-          <section>
-            <button onClick={fetchEntryHandler}>Fetch Entries</button>
-          </section>
-          <section>
-            <WorkBook entries={entries} />
-          </section>
-        </div>
-      </div>
-    </div>
+        </Col>
+      </Row>
+      <Row className="app">
+        <Col>
+          <WorkBook entries={entries} />
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

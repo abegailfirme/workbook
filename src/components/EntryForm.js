@@ -1,11 +1,13 @@
-import Modal from "./UI/Modal";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
+import CustomModal from "./UI/CustomModal";
 import useInput from "../hooks/useInput";
 import useNumber from "../hooks/useNumber";
 import useEmail from "../hooks/useEmail";
+import { Form, Button, Row, Col } from "react-bootstrap";
 
 const EntryForm = (props) => {
-  
+  const [saved, setSave] = useState(false);
+  let s = false;
   const {
     value: enteredFName,
     isValid: enteredFNameIsValid,
@@ -31,7 +33,7 @@ const EntryForm = (props) => {
     valueChangeHandler: idChangeHandler,
     inputBlurHandler: idBlurHandler,
     reset: resetID
-  }  = useNumber(value => value.trim() !== '');
+  } = useNumber(value => value.trim() !== '');
 
   const {
     value: enteredEmail,
@@ -49,81 +51,92 @@ const EntryForm = (props) => {
     valueChangeHandler: bdateChangeHandler,
     inputBlurHandler: bdateBlurHandler,
     reset: resetDate
-  } = useInput(value => value.trim() !== '');
+  } = useEmail(value => value.trim() !== '');
 
   let formIsValid = false;
 
-  if (enteredFNameIsValid && enteredLNameIsValid && enteredEmailIsValid &&  enteredIdIsValid && enteredDateIsValid) {
+  if (enteredFNameIsValid && enteredLNameIsValid && enteredEmailIsValid && enteredIdIsValid && enteredDateIsValid) {
     formIsValid = true;
   }
 
   const formSubmissionHandler = event => {
     event.preventDefault();
-
+  
     const entry = {
-      eid: enteredEID.current.value,
+      eid: enteredEID,
       firstname: enteredFName,
       lastname: enteredLName,
       email: enteredEmail,
       birthdate: enteredDate
     };
 
+  
     props.onAddEntry(entry);
 
+    setSave(true)
     resetfName();
     resetlName();
     resetEmail();
     resetID();
     resetDate();
+
   };
 
-  const fnameInputClasses = fnameInputHasError ? 'form-control invalid' : 'form-control';
-  const lnameInputClasses = lnameInputHasError ? 'form-control invalid' : 'form-control';
-  const emailInputClasses = emailInputHasError ? 'form-control invalid' : 'form-control';
-  const idInputClasses = idInputHasError ? 'form-control invalid' : 'form-control';
+  const modalHandler = () => {
+    setSave(false)
+  }
+
+  const fnameInputClasses = fnameInputHasError ? 'mb3 form-control invalid' : 'mb-3 form-control';
+  const lnameInputClasses = lnameInputHasError ? 'mb3 form-control invalid' : 'mb-3 form-control';
+  const emailInputClasses = emailInputHasError ? 'mb3 form-control invalid' : 'mb-3 form-control';
+  const idInputClasses = idInputHasError ? 'mb3 form-control invalid' : 'mb-3 form-control';
 
   return (
-    <React.Fragment>
-      <Modal modalTitle="Success!" modalMessage="The entry is succesfully saved." />
-      <form onSubmit={formSubmissionHandler}>
-        <div className={idInputClasses}>
-          <label htmlFor='eid'>Enterprise ID</label>
-          <input type='text' id='eid' value={enteredEID} onChange={idChangeHandler} onBlur={idBlurHandler}/>
-          {idInputHasError && <p className="error-text">Enterprise ID must not be empty</p>}
-          {!enteredIdIsValid && <p className="error-text">Enterprise ID must be numbers</p>}
-        </div>
+    <div>
+    
+      {saved && <CustomModal show = {saved} modalTitle="Success" modalMessage="The entry was successfully saved." onConfirm={modalHandler}/>}
+      <Form onSubmit={formSubmissionHandler}>
+        <Form.Group className="form-control" controlId="formGroupEmail">
+          <Row>
+            <Col>
+              <Form.Control className={idInputClasses} type='text' value={enteredEID} onChange={idChangeHandler} onBlur={idBlurHandler} placeholder="Enterprise ID" />
+              {idInputHasError && <Form.Text className="error-text">
+                Enterprise ID must not be empty
+              </Form.Text>}
+            </Col>
+          </Row>
 
-        <div>
-          <div className={fnameInputClasses}>
-            <label htmlFor='fname'>First name</label>
-            <input type='text' id='fname' value={enteredFName} onChange={fnameChangeHandler} onBlur={fnameBlurHandler} />
-            {fnameInputHasError && <p className="error-text">First name must not be empty</p>}
-          </div>
+          <Row>
+            <Col>
+              <Form.Control className={fnameInputClasses} type='text' value={enteredFName} onChange={fnameChangeHandler} onBlur={fnameBlurHandler} placeholder="First name" />
+              {fnameInputHasError && <Form.Text className="error-text">
+                First name must not be empty
+              </Form.Text>}
+            </Col>
+            <Col>
+              <Form.Control className={lnameInputClasses} type='text' value={enteredLName} onChange={lnameChangeHandler} onBlur={lnameBlurHandler} placeholder="Last name" />
+              {lnameInputHasError && <p className="error-text">Last name must not be empty</p>}
+            </Col>
+          </Row>
 
-          <div className={lnameInputClasses}>
-            <label htmlFor='lname'>Last name</label>
-            <input type='text' id='lname' value={enteredLName} onChange={lnameChangeHandler} onBlur={lnameBlurHandler} />
-            {lnameInputHasError && <p className="error-text">Last name must not be empty</p>}
-          </div>
-        </div>
-
-        <div className={emailInputClasses}>
-          <label htmlFor='email'>Email</label>
-          <input type='text' id='email' value={enteredEmail} onChange={emailChangeHandler} onBlur={emailBlurHandler} />
-          {emailInputHasError && <p className="error-text">Please enter a valid email</p>}
-        </div>
-
-        <div className={emailInputClasses}>
-          <label htmlFor='bdate'>Birthdate</label>
-          <input type='date' data-date="" data-date-format="yyyy-MM-dd" id='bdate' value={enteredDate} onChange={bdateChangeHandler} onBlur={bdateBlurHandler} />
-          {dateInputHasError && <p className="error-text">Birthdate is required.</p>}
-        </div>
-
-        <div className="form-actions">
-          <button className="btn btn-primary" disabled={!formIsValid}>Submit</button>
-        </div>
-      </form>
-    </React.Fragment>
+          <Row>
+            <Col>
+              <Form.Control className={emailInputClasses} type="text" value={enteredEmail} onChange={emailChangeHandler} onBlur={emailBlurHandler} placeholder="Email" />
+              {emailInputHasError && <Form.Text className="error-text">
+                Please enter a valid email
+              </Form.Text>}
+            </Col>
+            <Col>
+              <Form.Control className={emailInputClasses} type='date' value={enteredDate} onChange={bdateChangeHandler} onBlur={bdateBlurHandler} />
+              {dateInputHasError && <p className="error-text">Birthdate is required.</p>}
+            </Col>
+          </Row>
+          <Button variant="primary" type="submit" disabled={!formIsValid}>
+            Submit
+          </Button>
+        </Form.Group>
+      </Form>
+    </div>
   );
 };
 

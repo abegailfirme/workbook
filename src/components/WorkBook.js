@@ -1,20 +1,31 @@
 import React from 'react';
 import Entry from './Entry';
-// import classes from './MoviesList.module.css';
+import { Table } from 'react-bootstrap';
 
 const WorkBook = (props) => {
   return (
-    <ul >
-      {props.entries.map((entry) => (
-        <Entry
-          key={entry.eid}
-          eid={entry.eid}
-          firstname={entry.firstname}
-          lastname={entry.lastname}
-          email={entry.email}
-        />
-      ))}
-    </ul>
+    <Table striped bordered hover size="sm"> 
+      <thead>
+        <tr>
+          <th>EID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Birthdate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.entries.map((entry) => (
+          <Entry
+            key={entry.eid}
+            eid={entry.eid}
+            firstname={entry.firstname}
+            lastname={entry.lastname}
+            email={entry.email}
+            birthdate={entry.birthdate}
+          />
+        ))}
+      </tbody>
+    </Table>
   );
 };
 
