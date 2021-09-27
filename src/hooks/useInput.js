@@ -5,24 +5,23 @@ const useInput = (validator) => {
     const [isTouched, setIsTouched] = useState(false);
     const regEx = /^[a-zA-Z]+$/
 
-    let valueIsValid = regEx.test(validator(enteredValue));
-    let hasError = !valueIsValid && isTouched;
-
+    let valueIsValid = validator(enteredValue)
+    
     const valueChangeHandler = event => {
         let val = event.target.value;
-        if (event.target.value === '' || regEx.test(event.target.value)) 
+        valueIsValid = event.target.value === '' || regEx.test(event.target.value)
+        if (valueIsValid) 
         {   
             setEnteredValue(event.target.value);
+            return true
         }
         else {
-            valueIsValid = false
             event.target.value = val.substring(0, (val.length - 1))
+            return false
         }
     };
-
+    let hasError = !valueIsValid && isTouched
     const inputBlurHandler = event => {
-        
-        console.log(enteredValue, valueIsValid)
         setIsTouched(true);
     };
 
@@ -34,7 +33,7 @@ const useInput = (validator) => {
     return {
         value: enteredValue,
         isValid: valueIsValid,
-        hasError: !valueIsValid,
+        hasError,
         valueChangeHandler,
         inputBlurHandler,
         reset

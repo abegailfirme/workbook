@@ -1,26 +1,27 @@
 import { useState } from "react";
 
-const useNumber = (input) => {
+const useNumber = (validator) => {
+    const [enteredValue, setEnteredValue] = useState('');
+    const [isTouched, setIsTouched] = useState(false);
     const numExp = /^[0-9\b]+$/
 
-    const [enteredValue, setEnteredValue] = useState('');
-    // const [enteredValueIsValid, setEnteredValueIsValid] = useState(false);
-    const [isTouched, setIsTouched] = useState(false);
-
-    // let l = enteredValue.length;
-
-    // const numberRegEx = /[0-9]/;
-    const valueIsValid = input(enteredValue);
-    const hasError = !valueIsValid && isTouched;
-
+    let valueIsValid = validator(enteredValue)
+    
     const valueChangeHandler = event => {
-        console.log(event)
-        setEnteredValue(event.target.value);
-        let val = input.target.value;
-        if(input.target.value === '' || numExp.test(input.target.value)) return true;
-        else return false
-        // input.target.value = val.substring(0, (val.length-1))
+        let val = event.target.value;
+        valueIsValid = event.target.value === '' || numExp.test(event.target.value)
+        if (valueIsValid) 
+        {   
+            setEnteredValue(event.target.value);
+            return true
+        }
+        else {
+            event.target.value = val.substring(0, (val.length - 1))
+            return false
+        }
     };
+    
+    let hasError = !valueIsValid && isTouched
 
     const inputBlurHandler = event => {
         setIsTouched(true);
